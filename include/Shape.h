@@ -9,6 +9,8 @@
 class Shape
 {
     public:
+        static const float PPM = 64.f;
+        static const float MPP = 0.015625f; // 1/
 
         Shape();
 

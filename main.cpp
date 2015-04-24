@@ -2,6 +2,7 @@
 #include <Box2D/Box2D.h>
 #include "Shape.h"
 #include "Square.h"
+#include "Circle.h"
 
 #include <iostream>
 
@@ -14,9 +15,10 @@
 
 using namespace std;
 
+
+
 int main()
 {
-
     std::vector<Shape* > m_shapeVector;
 
     // Define world Box2D
@@ -30,7 +32,10 @@ int main()
     sueloBox.SetAsBox(800.0f/2*MPP, 100.0f/2*MPP);
     sueloBody->CreateFixture(&sueloBox, 0.0f);
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Collision Shapes");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Collision Shapes", sf::Style::Default, settings);
     window.setFramerateLimit(60);
 
     while (window.isOpen())
@@ -43,31 +48,17 @@ int main()
 
             if (event.type == sf::Event::MouseButtonPressed)
             {
+                sf::Vector2f position = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    int randSize = 50 + rand()%(100+1 - 50);
-                    sf::Vector2f posRaton = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
-
-                    Square* square = new Square(sf::Vector2f(randSize, randSize));
-
-                    b2PolygonShape polyShape;
-                    b2FixtureDef fixtureDef;
-                    b2BodyDef bodyDef;
-
-                    bodyDef.type = b2_dynamicBody;
-                    bodyDef.position.Set(posRaton.x * MPP, posRaton.y * MPP);
-                    square->setBody(world.CreateBody(&bodyDef));
-
-                    polyShape.SetAsBox(randSize/2 * MPP, randSize/2 * MPP);
-
-                    fixtureDef.shape = &polyShape;
-                    fixtureDef.friction = 0.2f;
-                    fixtureDef.restitution	= 0.3f;
-                    fixtureDef.density	= 0.7f;
-
-                    square->getBody()->CreateFixture(&fixtureDef);
-
+                    Square* square = new Square(position.x, position.y, world);
                     m_shapeVector.push_back(square);
+                }
+                else if (event.mouseButton.button == sf::Mouse::Right)
+                {
+                    Circle* circle = new Circle(position.x, position.y, world);
+                    m_shapeVector.push_back(circle);
                 }
             }
         }

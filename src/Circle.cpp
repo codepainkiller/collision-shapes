@@ -1,39 +1,41 @@
-#include "Square.h"
+#include "Circle.h"
 
-Square::Square(float x, float y, b2World &world)
+Circle::Circle(float x, float y, b2World &world)
 {
-    m_name = "Square";
-    //int randSize = 50 + rand()%(100+1 - 50);
+    m_name = "Circle";
+    m_radius = m_size.x / 2;
 
     // Create body Box2D
-    b2PolygonShape polygonShape;
-    b2FixtureDef fixtureDef;
+
+    b2CircleShape circleShape;
     b2BodyDef bodyDef;
+    b2FixtureDef fixtureDef;
+
+    circleShape.m_p.Set(0, 0);
+    circleShape.m_radius = m_radius * MPP;
 
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(x * MPP, y * MPP);
     m_body = world.CreateBody(&bodyDef);
 
-    polygonShape.SetAsBox( m_size.x/2 * MPP, m_size.y/2 * MPP);
-    fixtureDef.shape = &polygonShape;
+    fixtureDef.shape = &circleShape;
     fixtureDef.friction = 0.2f;
     fixtureDef.restitution	= 0.3f;
     fixtureDef.density	= 0.7f;
-
     m_body->CreateFixture(&fixtureDef);
 
     // Create shape SFML
-    m_shape.setSize(m_size);
-    m_shape.setOrigin(m_size.x/2, m_size.y/2);
+    m_shape.setOrigin(m_size.x / 2, m_size.y /2);
+    m_shape.setRadius(m_radius);
     m_shape.setFillColor(m_color);
 }
 
-void Square::draw(sf::RenderWindow &window)
+void Circle::draw(sf::RenderWindow& window)
 {
     if (m_body != NULL)
     {
-        float angle = m_body->GetAngle();
-        b2Vec2 position =  m_body->GetPosition();
+        b2Vec2 position = m_body->GetPosition();
+        float  angle = m_body->GetAngle();
 
         m_shape.setPosition(position.x * PPM, position.y * PPM);
         m_shape.setRotation((angle * 180) / M_PI);

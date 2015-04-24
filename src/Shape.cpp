@@ -3,10 +3,11 @@
 Shape::Shape()
 {
     m_name = "Shape";
-    m_color = sf::Color::White;
-    std::cout << m_name << ": constructor" << std::endl;
+    m_color = sf::Color::Cyan;
+    m_size = sf::Vector2f(50.f, 50.0f);
 }
-void Shape::draw(sf::RenderWindow &window){
+void Shape::draw(sf::RenderWindow &window)
+{
 
 }
 
