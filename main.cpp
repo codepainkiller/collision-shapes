@@ -3,7 +3,7 @@
 #include "Shape.h"
 #include "Square.h"
 #include "Circle.h"
-
+#include "Rectangle.h"
 #include <iostream>
 
 #define TIMESTEP 1.0f/60.0f     //TIEMPO DE REFRESCO
@@ -13,30 +13,33 @@
 #define PPM 64.0f               //PIXELS POR METRO
 #define MPP (1.0f/PPM)          //METROS POR PIXEL
 
+#define WIDTH 800
+#define HEIGHT 600
+
 using namespace std;
 
 
 
 int main()
 {
-    std::vector<Shape* > m_shapeVector;
-
     // Define world Box2D
     b2World world(b2Vec2(0.0f, 10.0f));
 
-    // Define static ground
-    b2BodyDef sueloBodyDef;
-    sueloBodyDef.position.Set(400.0f*MPP, 550.0f*MPP);
-    b2Body* sueloBody = world.CreateBody(&sueloBodyDef);
-    b2PolygonShape sueloBox;
-    sueloBox.SetAsBox(800.0f/2*MPP, 100.0f/2*MPP);
-    sueloBody->CreateFixture(&sueloBox, 0.0f);
+    std::vector<Shape* > m_shapeVector;
+
+    // Create body's static
+    m_shapeVector.push_back(new Rectangle(400.f, 0.f, sf::Vector2f(800.f, 10.f), world));
+    m_shapeVector.push_back(new Rectangle(400.f, 600.f, sf::Vector2f(800.f, 10.f), world));
+    m_shapeVector.push_back(new Rectangle(0.f, 300.f, sf::Vector2f(10.f, 800.f), world));
+    m_shapeVector.push_back(new Rectangle(800.f, 300.f, sf::Vector2f(10.f, 800.f), world));
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Collision Shapes", sf::Style::Default, settings);
     window.setFramerateLimit(60);
+
+
 
     while (window.isOpen())
     {
@@ -59,6 +62,9 @@ int main()
                 {
                     Circle* circle = new Circle(position.x, position.y, world);
                     m_shapeVector.push_back(circle);
+                    //Rectangle* rectangle = new Rectangle(position.x, position.y, sf::Vector2f(100.0f, 50.0f), world);
+                    //m_shapeVector.push_back(rectangle);
+
                 }
             }
         }
@@ -73,13 +79,6 @@ int main()
         {
             m_shapeVector.at(i)->draw(window);
         }
-
-        // Draw ground
-        sf::RectangleShape rectSuelo(sf::Vector2f(800, 100));
-        rectSuelo.setOrigin(800/2, 100/2);
-        rectSuelo.setPosition(sf::Vector2f(sueloBody->GetPosition().x*PPM, sueloBody->GetPosition().y*PPM));
-        rectSuelo.setFillColor(sf::Color::Red);
-        window.draw(rectSuelo);
 
         window.display();
     }

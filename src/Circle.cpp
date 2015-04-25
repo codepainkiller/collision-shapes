@@ -3,6 +3,7 @@
 Circle::Circle(float x, float y, b2World &world)
 {
     m_name = "Circle";
+    m_color = sf::Color::White;
     m_radius = m_size.x / 2;
 
     // Create body Box2D
