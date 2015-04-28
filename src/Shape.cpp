@@ -3,8 +3,14 @@
 Shape::Shape()
 {
     m_name = "Shape";
-    m_color = sf::Color::Cyan;
+
+    // Size shape
     m_size = sf::Vector2f(50.f, 50.0f);
+
+    // Rand color
+    m_color.r = rand() % (255 + 1);
+    m_color.g = rand() % (255 + 1);
+    m_color.b = rand() % (255 + 1);
 }
 void Shape::draw(sf::RenderWindow &window)
 {

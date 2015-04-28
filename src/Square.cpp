@@ -3,7 +3,6 @@
 Square::Square(float x, float y, b2World &world)
 {
     m_name = "Square";
-    //int randSize = 50 + rand()%(100+1 - 50);
 
     // Create body Box2D
     b2PolygonShape polygonShape;
@@ -34,7 +33,7 @@ void Square::draw(sf::RenderWindow &window)
     {
         float angle = m_body->GetAngle();
         b2Vec2 position =  m_body->GetPosition();
-
+        //std::cout << position.x << ", " << position.y << std::endl;
         m_shape.setPosition(position.x * PPM, position.y * PPM);
         m_shape.setRotation((angle * 180) / M_PI);
 

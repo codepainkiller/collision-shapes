@@ -3,11 +3,9 @@
 Circle::Circle(float x, float y, b2World &world)
 {
     m_name = "Circle";
-    m_color = sf::Color::White;
     m_radius = m_size.x / 2;
 
     // Create body Box2D
-
     b2CircleShape circleShape;
     b2BodyDef bodyDef;
     b2FixtureDef fixtureDef;
@@ -35,6 +33,7 @@ void Circle::draw(sf::RenderWindow& window)
 {
     if (m_body != NULL)
     {
+
         b2Vec2 position = m_body->GetPosition();
         float  angle = m_body->GetAngle();
 
