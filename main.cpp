@@ -30,6 +30,9 @@ void createShape(vector<Shape* > &vectorShapes, b2World &world, sf::Vector2f pos
     Shape* shape;
     b2Body* body;
 
+    position.x = randomNumber(50, WIDTH - 50);
+    position.y = randomNumber(50, HEIGHT - 50);
+
     switch(n)
     {
         case 1:
