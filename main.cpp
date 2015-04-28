@@ -21,14 +21,50 @@ using namespace std;
 
 int randomNumber(int min, int max)
 {
-    srand(time(0));
     return min + rand()% (max - min);
+}
+
+void createShape(vector<Shape* > &vectorShapes, b2World &world, sf::Vector2f position)
+{
+    int n = randomNumber(1, 4);
+    Shape* shape;
+    b2Body* body;
+
+    switch(n)
+    {
+        case 1:
+            cout << "Square created!" << endl;
+            shape = static_cast<Square*>( new Square(position.x, position.y, world) );
+            vectorShapes.push_back( shape );
+            body = vectorShapes.at(vectorShapes.size() - 1)->getBody();
+            body->ApplyForce(b2Vec2(-100, 100), body->GetWorldCenter(), true);
+            break;
+        case 2:
+            cout << "Circle created!" << endl;
+            shape = static_cast<Circle*>( new Circle(position.x, position.y, world) );
+            vectorShapes.push_back( shape );
+            body = vectorShapes.at(vectorShapes.size() - 1)->getBody();
+            body->ApplyForce(b2Vec2(100, -100), body->GetWorldCenter(), true);
+            break;
+        case 3:
+            shape = static_cast<Triangle*>( new Triangle(world, position) );
+            vectorShapes.push_back( shape );
+            body = vectorShapes.at(vectorShapes.size() - 1)->getBody();
+            body->ApplyForce(b2Vec2(-50, -50), body->GetWorldCenter(), true);
+            cout << "Triangle created!" << endl;
+            break;
+        case 4:
+            cout << "Rhombus created!" << endl;
+            break;
+    }
 }
 
 int main()
 {
+    srand(time(0));
+
     // Define world Box2D
-    b2World world(b2Vec2(0, 9.8f));
+    b2World world(b2Vec2(0, 0.f));
 
     std::vector<Shape* > m_shapeVector;
 
@@ -87,18 +123,21 @@ int main()
 
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    Square* square = new Square(position.x, position.y, world);
-                    m_shapeVector.push_back(square);
+                    // Create random shape
+                    createShape(m_shapeVector, world, position);
                 }
                 else if (event.mouseButton.button == sf::Mouse::Right)
                 {
-                    //Circle* circle = new Circle(position.x, position.y, world);
-                    //m_shapeVector.push_back(circle);
-                    //Rectangle* rectangle = new Rectangle(position.x, position.y, sf::Vector2f(100.0f, 50.0f), world);
-                    //m_shapeVector.push_back(rectangle);
+                    // Impulse aleatory
+                    int nShapes = m_shapeVector.size();
 
-                    Triangle* triangle = new Triangle(world, position);
-                    m_shapeVector.push_back(triangle);
+                    if (nShapes > 5)
+                    {
+                        int randShape = randomNumber(5, nShapes);
+                        cout << "Impulse: " << randShape <<  endl;
+                        b2Body* body = m_shapeVector.at(randShape - 1)->getBody();
+                        body->ApplyForce( b2Vec2(200, 200), body->GetWorldCenter(), true );
+                    }
                 }
             }
         }

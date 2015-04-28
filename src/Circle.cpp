@@ -18,8 +18,8 @@ Circle::Circle(float x, float y, b2World &world)
     m_body = world.CreateBody(&bodyDef);
 
     fixtureDef.shape = &circleShape;
-    fixtureDef.friction = 0.2f;
-    fixtureDef.restitution	= 0.3f;
+    fixtureDef.friction = 1;
+    fixtureDef.restitution	= 1;
     fixtureDef.density	= 0.7f;
     m_body->CreateFixture(&fixtureDef);
 

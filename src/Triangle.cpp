@@ -44,8 +44,8 @@ Triangle::Triangle(b2World &world, sf::Vector2f center)
     m_body = world.CreateBody(&bodyDef);
 
     fixtureDef.shape = &polygonShape;
-    fixtureDef.friction = 0.2f;
-    fixtureDef.restitution	= 0.3f;
+    fixtureDef.friction = 1;
+    fixtureDef.restitution	= 1;
     fixtureDef.density	= 0.7f;
 
     m_body->CreateFixture(&fixtureDef);
