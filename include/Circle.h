@@ -6,7 +6,7 @@
 class Circle : public Shape
 {
     public:
-        Circle(float x, float y, b2World &world);
+        Circle(b2World &world, sf::Vector2f center);
 
         void draw(sf::RenderWindow &window);
 

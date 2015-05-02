@@ -1,6 +1,6 @@
 #include "Square.h"
 
-Square::Square(float x, float y, b2World &world)
+Square::Square(b2World &world, sf::Vector2f center)
 {
     m_name = "Square";
 
@@ -10,7 +10,7 @@ Square::Square(float x, float y, b2World &world)
     b2BodyDef bodyDef;
 
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(x * MPP, y * MPP);
+    bodyDef.position.Set(center.x * MPP, center.y * MPP);
     m_body = world.CreateBody(&bodyDef);
 
     polygonShape.SetAsBox( m_size.x/2 * MPP, m_size.y/2 * MPP);

@@ -2,6 +2,7 @@
 
 Rectangle::Rectangle(float x, float y, sf::Vector2f size, b2World& world)
 {
+    m_name = "Rectangle";
     m_size = size;
     m_color = sf::Color::Green;
 

@@ -26,3 +26,8 @@ void Shape::setBody(b2Body* body)
 {
     m_body = body;
 }
+
+std::string Shape::getName()
+{
+    return m_name;
+}

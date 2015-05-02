@@ -1,13 +1,13 @@
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
+#ifndef RHOMBUS_H
+#define RHOMBUS_H
 
 #include "Shape.h"
 
-class Triangle : public Shape
+class Rhombus : public Shape
 {
     public:
 
-        Triangle(b2World &world, sf::Vector2f center);
+        Rhombus(b2World &world, sf::Vector2f center);
 
         void draw(sf::RenderWindow &window);
 
@@ -18,4 +18,4 @@ class Triangle : public Shape
     private:
 };
 
-#endif // TRIANGLE_H
+#endif // RHOMBUS_H

@@ -11,7 +11,7 @@ class Shape
 {
     public:
         static const float PPM = 64.f;
-        static const float MPP = 0.015625f; // 1/
+        static const float MPP = 0.015625f;
 
         Shape();
 
@@ -20,6 +20,8 @@ class Shape
         void    setBody(b2Body* body);
 
         b2Body* getBody();
+
+        std::string  getName();
 
     protected:
 

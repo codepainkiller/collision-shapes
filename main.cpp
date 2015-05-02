@@ -1,18 +1,20 @@
-#include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <Box2D/Box2D.h>
+
 #include "SFMLDebugDraw.h"
 #include "Shape.h"
+#include "Rectangle.h"
 #include "Square.h"
 #include "Circle.h"
-#include "Rectangle.h"
 #include "Triangle.h"
+#include "Rhombus.h"
+
 #include <iostream>
 #include <ctime>
 
-#define TIMESTEP 1.0f/60.0f     //TIEMPO DE REFRESCO
-#define VELITER 10              //NUMERO DE ITERACION POR TICK PARA CALCULAR LA VELOCIDAD
-#define POSITER 10              //NUMERO DE ITERACIONES POR TICK PARA CALCULAR LA POSICION
+#define TIMESTEP 1.0f/60.0f     // Refresh time
+#define VELITER 10              // Number of iterations per tick to calculate speed
+#define POSITER 10              // Number tick iterations to calculate the position
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -21,146 +23,174 @@ using namespace std;
 
 int randomNumber(int min, int max)
 {
-    return min + rand()% (max - min);
+    return min + rand()% (max - min + 1);
 }
 
-void createShape(vector<Shape* > &vectorShapes, b2World &world, sf::Vector2f position)
+void createShape(vector<Shape* > &vectorShapes, b2World &world, int numberShape)
 {
-    int n = randomNumber(1, 4);
-    Shape* shape;
-    b2Body* body;
+    if (numberShape < 1 || numberShape > 4)
+        return;
+
+    Shape*          shape;
+    b2Body*         body;
+    sf::Vector2f    position;
 
     position.x = randomNumber(50, WIDTH - 50);
     position.y = randomNumber(50, HEIGHT - 50);
 
-    switch(n)
+    switch( numberShape )
     {
         case 1:
-            cout << "Square created!" << endl;
-            shape = static_cast<Square*>( new Square(position.x, position.y, world) );
-            vectorShapes.push_back( shape );
-            body = vectorShapes.at(vectorShapes.size() - 1)->getBody();
-            body->ApplyForce(b2Vec2(-100, 100), body->GetWorldCenter(), true);
+            shape = static_cast<Square*>( new Square(world, position) );
             break;
+
         case 2:
-            cout << "Circle created!" << endl;
-            shape = static_cast<Circle*>( new Circle(position.x, position.y, world) );
-            vectorShapes.push_back( shape );
-            body = vectorShapes.at(vectorShapes.size() - 1)->getBody();
-            body->ApplyForce(b2Vec2(100, -100), body->GetWorldCenter(), true);
+            shape = static_cast<Circle*>( new Circle(world, position) );
             break;
+
         case 3:
             shape = static_cast<Triangle*>( new Triangle(world, position) );
-            vectorShapes.push_back( shape );
-            body = vectorShapes.at(vectorShapes.size() - 1)->getBody();
-            body->ApplyForce(b2Vec2(-50, -50), body->GetWorldCenter(), true);
-            cout << "Triangle created!" << endl;
             break;
+
         case 4:
-            cout << "Rhombus created!" << endl;
+            shape = static_cast<Rhombus*>( new Rhombus(world, position) );
             break;
     }
+
+    // Add shape
+    vectorShapes.push_back(shape);
+
+    // Initial move
+    b2Vec2 force;
+    force.x = randomNumber(-100, 100);
+    force.y = randomNumber(-100, 100);
+
+    body = vectorShapes.back()->getBody();
+    body->ApplyForce(force, body->GetWorldCenter(), true);
+}
+
+void showInstructions()
+{
+    cout << endl << endl;
+
+    cout << " INSTRUCTIONS             "            << endl << endl;
+
+    cout << " Draw square       : Key 1"            << endl;
+    cout << " Draw circle       : Key 2"            << endl;
+    cout << " Draw triangle     : Key 3"            << endl;
+    cout << " Draw rhombus      : Key 4"            << endl;
+    cout << " Random movement   : Key 5"            << endl << endl;
+
+    cout << " Debug draw        : Keys F1, F2, F3";
 }
 
 int main()
 {
     srand(time(0));
 
-    // Define world Box2D
-    b2World world(b2Vec2(0, 0.f));
+    // Instructions
+    showInstructions();
 
-    std::vector<Shape* > m_shapeVector;
+    // Define world Box2D - Zero gravity
+    b2World m_world(b2Vec2(0.f, 0.f));
 
-    // Create body's static
-    m_shapeVector.push_back(new Rectangle(400.f, 0.f, sf::Vector2f(800.f, 1.f), world));
-    m_shapeVector.push_back(new Rectangle(400.f, 600.f, sf::Vector2f(800.f, 1.f), world));
-    m_shapeVector.push_back(new Rectangle(0.f, 300.f, sf::Vector2f(1.f, 800.f), world));
-    m_shapeVector.push_back(new Rectangle(800.f, 300.f, sf::Vector2f(1.f, 800.f), world));
+    std::vector<Shape* > m_vectorShapes;
+
+    // Create walls - static bodies
+    m_vectorShapes.push_back(new Rectangle(400.f, 0.f, sf::Vector2f(800.f, 1.f), m_world));
+    m_vectorShapes.push_back(new Rectangle(400.f, 600.f, sf::Vector2f(800.f, 1.f), m_world));
+    m_vectorShapes.push_back(new Rectangle(0.f, 300.f, sf::Vector2f(1.f, 800.f), m_world));
+    m_vectorShapes.push_back(new Rectangle(800.f, 300.f, sf::Vector2f(1.f, 800.f), m_world));
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Collision Shapes", sf::Style::Default, settings);
-    window.setFramerateLimit(60);
+    sf::RenderWindow m_window(sf::VideoMode(800, 600), "Collision Shapes", sf::Style::Default, settings);
+    m_window.setFramerateLimit(60);
 
     // Initialize Debug draw
-    SFMLDebugDraw debugDraw(window);
-    world.SetDebugDraw(&debugDraw);
+    SFMLDebugDraw debugDraw(m_window);
+    m_world.SetDebugDraw(&debugDraw);
 
     // Set initial flags for what to draw
     debugDraw.SetFlags(b2Draw::e_shapeBit);
 
-    while (window.isOpen())
+    while (m_window.isOpen())
     {
         sf::Event event;
-        while (window.pollEvent(event))
+        while (m_window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                window.close();
+                m_window.close();
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) ||
-                sf::Keyboard::isKeyPressed(sf::Keyboard::Q) )
+            if ( event.type == sf::Event::KeyReleased )
             {
-                window.close();
-            }
+                // Create shapes
+                if (event.key.code == sf::Keyboard::Num1)
+                    createShape(m_vectorShapes, m_world, 1);
 
-            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F1)
-			{
-				if(debugDraw.GetFlags() & b2Draw::e_shapeBit) debugDraw.ClearFlags(b2Draw::e_shapeBit);
-				else debugDraw.AppendFlags(b2Draw::e_shapeBit);
-			}
-			if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F2)
-			{
-				if(debugDraw.GetFlags() & b2Draw::e_aabbBit) debugDraw.ClearFlags(b2Draw::e_aabbBit);
-				else debugDraw.AppendFlags(b2Draw::e_aabbBit);
-			}
-			if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F3)
-			{
-				if(debugDraw.GetFlags() & b2Draw::e_centerOfMassBit) debugDraw.ClearFlags(b2Draw::e_centerOfMassBit);
-				else debugDraw.AppendFlags(b2Draw::e_centerOfMassBit);
-			}
+                if (event.key.code == sf::Keyboard::Num2)
+                    createShape(m_vectorShapes, m_world, 2);
 
-            if (event.type == sf::Event::MouseButtonPressed)
-            {
-                sf::Vector2f position = sf::Vector2f(event.mouseButton.x, event.mouseButton.y);
+                if (event.key.code == sf::Keyboard::Num3)
+                    createShape(m_vectorShapes, m_world, 3);
 
-                if (event.mouseButton.button == sf::Mouse::Left)
+                if (event.key.code == sf::Keyboard::Num4)
+                    createShape(m_vectorShapes, m_world, 4);
+
+                // Move shape
+                if (event.key.code == sf::Keyboard::Space)
                 {
-                    // Create random shape
-                    createShape(m_shapeVector, world, position);
-                }
-                else if (event.mouseButton.button == sf::Mouse::Right)
-                {
-                    // Impulse aleatory
-                    int nShapes = m_shapeVector.size();
+                    int nShapes = m_vectorShapes.size();
 
-                    if (nShapes > 5)
+                    if (nShapes > 4)
                     {
                         int randShape = randomNumber(5, nShapes);
-                        cout << "Impulse: " << randShape <<  endl;
-                        b2Body* body = m_shapeVector.at(randShape - 1)->getBody();
-                        body->ApplyForce( b2Vec2(200, 200), body->GetWorldCenter(), true );
+                        b2Vec2 force(randomNumber(-100, 100), randomNumber(-100, 100));
+
+                        b2Body* body = m_vectorShapes.at(randShape - 1)->getBody();
+                        body->ApplyForce( force, body->GetWorldCenter(), true );
                     }
+                }
+
+                // Close application
+                if (event.key.code == sf::Keyboard::Escape)
+                    m_window.close();
+
+                // Debug draw shapes
+                if(event.key.code == sf::Keyboard::F1)
+                {
+                    if(debugDraw.GetFlags() & b2Draw::e_shapeBit) debugDraw.ClearFlags(b2Draw::e_shapeBit);
+                    else debugDraw.AppendFlags(b2Draw::e_shapeBit);
+                }
+                if(event.key.code == sf::Keyboard::F2)
+                {
+                    if(debugDraw.GetFlags() & b2Draw::e_aabbBit) debugDraw.ClearFlags(b2Draw::e_aabbBit);
+                    else debugDraw.AppendFlags(b2Draw::e_aabbBit);
+                }
+                if(event.key.code == sf::Keyboard::F3)
+                {
+                    if(debugDraw.GetFlags() & b2Draw::e_centerOfMassBit) debugDraw.ClearFlags(b2Draw::e_centerOfMassBit);
+                    else debugDraw.AppendFlags(b2Draw::e_centerOfMassBit);
                 }
             }
         }
 
         // Update window
-        window.clear(sf::Color::White);
+        m_window.clear(sf::Color::Transparent);
 
-        // Update word
-        world.Step(TIMESTEP, VELITER, POSITER);
+        // Update world Box2D
+        m_world.Step(TIMESTEP, VELITER, POSITER);
 
         // Draw vector shapes
+        for (unsigned i = 0; i < m_vectorShapes.size(); i++)
+            m_vectorShapes.at(i)->draw(m_window);
 
-        for (unsigned i = 0; i < m_shapeVector.size(); i++)
-        {
-            m_shapeVector.at(i)->draw(window);
-        }
+        // Debug draw display
+        m_world.DrawDebugData();
 
-        world.DrawDebugData();
-
-        window.display();
+        // Render window
+        m_window.display();
     }
 
     return 0;

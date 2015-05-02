@@ -6,7 +6,7 @@
 class Square : public Shape
 {
     public:
-        Square(float x, float y, b2World &world);
+        Square(b2World &world, sf::Vector2f center);
 
         Square(sf::Vector2f size);
 

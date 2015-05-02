@@ -1,6 +1,6 @@
 #include "Circle.h"
 
-Circle::Circle(float x, float y, b2World &world)
+Circle::Circle(b2World &world, sf::Vector2f center)
 {
     m_name = "Circle";
     m_radius = m_size.x / 2;
@@ -14,7 +14,7 @@ Circle::Circle(float x, float y, b2World &world)
     circleShape.m_radius = m_radius * MPP;
 
     bodyDef.type = b2_dynamicBody;
-    bodyDef.position.Set(x * MPP, y * MPP);
+    bodyDef.position.Set(center.x * MPP, center.y * MPP);
     m_body = world.CreateBody(&bodyDef);
 
     fixtureDef.shape = &circleShape;
