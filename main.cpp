@@ -79,7 +79,7 @@ void showInstructions()
     cout << " Draw circle       : Key 2"            << endl;
     cout << " Draw triangle     : Key 3"            << endl;
     cout << " Draw rhombus      : Key 4"            << endl;
-    cout << " Random movement   : Key 5"            << endl << endl;
+    cout << " Random movement   : Key space"        << endl << endl;
 
     cout << " Debug draw        : Keys F1, F2, F3";
 }
