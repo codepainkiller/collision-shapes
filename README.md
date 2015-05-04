@@ -1,4 +1,4 @@
-# collision-shapes
+# Collision Shapes - SFML & Box2D
 Polimorfismo - Colisión de figuras geométricas en C++
 
 - IDE:
